@@ -1,0 +1,475 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Form</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      .error { color: red; }
+    </style>  
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2 class="mb-4">User Form</h2>
+      <form id="userForm">
+  
+         <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" class="form-control" id="firstName" name="firstName" pattern="[A-Za-z]+" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" class="form-control" id="lastName" name="lastName" pattern="[A-Za-z]+" required>
+        </div>
+        <div class="form-group">
+          <label for="mobileNo">Mobile No</label>
+          <input type="text" class="form-control" id="mobileNo" name="mobileNo" required>
+        </div>
+        <div class="form-group">
+          <label for="emailId">Email</label>
+          <input type="email" class="form-control" id="emailId" name="emailId" required>
+        </div>
+        <div class="form-group">
+          <label for="street">Street</label>
+          <input type="text" class="form-control" id="street" name="street" pattern="[A-Za-z]+" required>
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z]+" required>
+        </div>
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" class="form-control" id="state" name="state" pattern="[A-Za-z]+" required>
+        </div>
+        <div class="form-group">
+          <label for="country">Country</label>
+          <input type="text" class="form-control" id="country" name="country" pattern="[A-Za-z]+" required>
+        </div>
+        <div class="form-group">
+          <label for="loginId">Login ID</label>
+          <input type="text" class="form-control" id="loginId" name="loginId" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+      <div id="errorMessages" class="error mt-3"></div>
+    </div>
+   
+    <script>
+      $(document).ready(function () {
+        $("#userForm").on("submit", function (event) {
+          event.preventDefault();
+          const formData = {
+            firstName: $('input[name="firstName"]').val(),
+            lastName: $('input[name="lastName"]').val(),
+            mobileNo: $('input[name="mobileNo"]').val(),
+            emailId: $('input[name="emailId"]').val(),
+            address: {
+              street: $('input[name="street"]').val(),
+              city: $('input[name="city"]').val(),
+              state: $('input[name="state"]').val(),
+              country: $('input[name="country"]').val(),
+            },
+            loginId: $('input[name="loginId"]').val(),
+            password: $('input[name="password"]').val(),
+          };
+          $.ajax({
+            type: "POST",
+            url: "/api/users",
+            data: JSON.stringify(formData),
+            contentType: "application/json",
+            success: function (response) {
+              const user = {
+                emailId: response.emailId,
+                name: `${response.firstName} ${response.lastName}`,
+              };
+              localStorage.setItem("live_user", JSON.stringify(user));
+              window.location.href = "/display";
+            },
+            error: function (err) {
+              $('#errorMessages').empty();
+              try {
+                const response = JSON.parse(err.responseText);
+                if (response.errors) {
+                  for (const field in response.errors) {
+                    $('#errorMessages').append(`<p>${field}: ${response.errors[field]}</p>`);
+                  }
+                } else {
+                  $('#errorMessages').append(`<p>An unknown error occurred.</p>`);
+                }
+              } catch (e) {
+                $('#errorMessages').append(`<p>An unknown error occurred.</p>`);
+              }
+              
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 600px;
+      margin-top: 50px;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #343a40;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      color: #495057;
+    }
+
+    .form-control {
+      border-radius: 0.25rem;
+      border: 1px solid #ced4da;
+    }
+
+    .form-control:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      border-radius: 0.25rem;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #004085;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+
+    #errorMessages p {
+      margin: 0;
+      padding: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">User Form</h2>
+    <form id="userForm">
+
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" id="lastName" name="lastName" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="mobileNo">Mobile No</label>
+        <input type="text" class="form-control" id="mobileNo" name="mobileNo" required>
+      </div>
+      <div class="form-group">
+        <label for="emailId">Email</label>
+        <input type="email" class="form-control" id="emailId" name="emailId" required>
+      </div>
+      <div class="form-group">
+        <label for="street">Street</label>
+        <input type="text" class="form-control" id="street" name="street" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="state">State</label>
+        <input type="text" class="form-control" id="state" name="state" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="country">Country</label>
+        <input type="text" class="form-control" id="country" name="country" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="loginId">Login ID</label>
+        <input type="text" class="form-control" id="loginId" name="loginId" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    <div id="errorMessages" class="error mt-3"></div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#userForm").on("submit", function (event) {
+        event.preventDefault();
+        const formData = {
+          firstName: $('input[name="firstName"]').val(),
+          lastName: $('input[name="lastName"]').val(),
+          mobileNo: $('input[name="mobileNo"]').val(),
+          emailId: $('input[name="emailId"]').val(),
+          address: {
+            street: $('input[name="street"]').val(),
+            city: $('input[name="city"]').val(),
+            state: $('input[name="state"]').val(),
+            country: $('input[name="country"]').val(),
+          },
+          loginId: $('input[name="loginId"]').val(),
+          password: $('input[name="password"]').val(),
+        };
+        $.ajax({
+          type: "POST",
+          url: "/api/users",
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          success: function (response) {
+            const user = {
+              emailId: response.emailId,
+              name: `${response.firstName} ${response.lastName}`,
+            };
+            localStorage.setItem("live_user", JSON.stringify(user));
+            window.location.href = "/display";
+          },
+          error: function (err) {
+            $('#errorMessages').empty();
+            try {
+              const response = JSON.parse(err.responseText);
+              if (response.errors) {
+                for (const field in response.errors) {
+                  $('#errorMessages').append(`<p>${field}: ${response.errors[field]}</p>`);
+                }
+              } else {
+                $('#errorMessages').append(`<p>An unknown error occurred.</p>`);
+              }
+            } catch (e) {
+              $('#errorMessages').append(`<p>An unknown error occurred.</p>`);
+            }
+
+          },
+        });
+      });
+    });
+  </script>
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+      font-family: 'Arial', sans-serif;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin-top: 50px;
+      background-color: #ffffff;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #6a0572;
+      font-weight: bold;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      color: #6a0572;
+    }
+
+    .form-control {
+      border-radius: 0.25rem;
+      border: 1px solid #ced4da;
+    }
+
+    .form-control:focus {
+      border-color: #8ec5fc;
+      box-shadow: 0 0 5px rgba(142, 197, 252, 0.5);
+    }
+
+    .btn-primary {
+      background-color: #8e44ad;
+      border-color: #8e44ad;
+      border-radius: 0.25rem;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .btn-primary:hover {
+      background-color: #732d91;
+      border-color: #6a0572;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+
+    #errorMessages p {
+      margin: 0;
+      padding: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">User Form</h2>
+    <form id="userForm">
+
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" id="lastName" name="lastName" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="mobileNo">Mobile No</label>
+        <input type="text" class="form-control" id="mobileNo" name="mobileNo" required>
+      </div>
+      <div class="form-group">
+        <label for="emailId">Email</label>
+        <input type="email" class="form-control" id="emailId" name="emailId" required>
+      </div>
+      <div class="form-group">
+        <label for="street">Street</label>
+        <input type="text" class="form-control" id="street" name="street" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="state">State</label>
+        <input type="text" class="form-control" id="state" name="state" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="country">Country</label>
+        <input type="text" class="form-control" id="country" name="country" pattern="[A-Za-z]+" required>
+      </div>
+      <div class="form-group">
+        <label for="loginId">Login ID</label>
+        <input type="text" class="form-control" id="loginId" name="loginId" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    <div id="errorMessages" class="error mt-3"></div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#userForm").on("submit", function (event) {
+        event.preventDefault();
+        const formData = {
+          firstName: $('input[name="firstName"]').val(),
+          lastName: $('input[name="lastName"]').val(),
+          mobileNo: $('input[name="mobileNo"]').val(),
+          emailId: $('input[name="emailId"]').val(),
+          address: {
+            street: $('input[name="street"]').val(),
+            city: $('input[name="city"]').val(),
+            state: $('input[name="state"]').val(),
+            country: $('input[name="country"]').val(),
+          },
+          loginId: $('input[name="loginId"]').val(),
+          password: $('input[name="password"]').val(),
+        };
+        $.ajax({
+          type: "POST",
+          url: "/api/users",
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          success: function (response) {
+            const user = {
+              emailId: response.emailId,
+              name: `${response.firstName} ${response.lastName}`,
+            };
+            localStorage.setItem("live_user", JSON.stringify(user));
+            window.location.href = "/display";
+          },
+          error: function (err) {
+            $('#errorMessages').empty();
+            try {
+              const response = JSON.parse(err.responseText);
+              if (response.errors) {
+                for (const field in response.errors) {
+                  $('#errorMessages').append(`<p>${field}: ${response.errors[field]}</p>`);
+                }
+              } else {
+                $('#errorMessages').append(`<p>An unknown error occurred.</p>`);
+              }
+            } catch (e) {
+              $('#errorMessages').append(`<p>An unknown error occurred.</p>`);
+            }
+
+          },
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
